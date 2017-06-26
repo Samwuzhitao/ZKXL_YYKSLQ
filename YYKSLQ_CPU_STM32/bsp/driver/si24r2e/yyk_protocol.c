@@ -44,6 +44,7 @@ yyk_pro_tyedef *yyk_pro_list[YYK_PROTOCOL_MUM] =
 /*---------------------------- 协议共有函数定义 ------------------------*/
 int16_t yyk_protocol_update_rf_setting( yyk_pro_tyedef *pprotocol )
 {
+	uint8_t i;
 	/* 打印协议名 */
 	//printf("PROTOCOL NAME: %s",pprotocol->name);
 	/* 同步信道 */
@@ -124,7 +125,7 @@ int16_t yyk_protocol_update_rf_setting( yyk_pro_tyedef *pprotocol )
 	/* 同步发送数据 */
 	if(pprotocol->conf.data_len <= 32)
 	{
-		txbuf[NVM_FIFO_LEN]  = (txbuf[NVM_FIFO_LEN] & 0xC0);
+		txbuf[NVM_FIFO_LEN]  = (txbuf[NVM_FIFO_LEN] & 0xC0) | 0x40;
 		txbuf[NVM_FIFO_LEN] |= pprotocol->conf.data_len;
 		memcpy(txdata,pprotocol->conf.data,
 		         pprotocol->conf.data_len);
@@ -132,27 +133,22 @@ int16_t yyk_protocol_update_rf_setting( yyk_pro_tyedef *pprotocol )
 	else
 		return -5;
 
-	/* 同步发送间隔 */
-	if(pprotocol->conf.send_delay >= 270)
-	{
-		txbuf[NVM_FIFO_LEN] = (txbuf[NVM_FIFO_LEN] & 0x3F);
-		txbuf[NVM_RF_TH]    = (((pprotocol->conf.send_delay-270) * 3)&0xFF00) >> 8;
-		txbuf[NVM_RF_TL]    = (((pprotocol->conf.send_delay-270)* 3)&0xFF);
-	}
-	else
-		return -6;
-
 	/* 低电压报警设置 ：2.2V*/
 	{
 		txbuf[NVM_TEST]        = txbuf[NVM_TEST] | 0x08;
-		txbuf[NVM_LV_REP]      = (txbuf[NVM_LV_REP] | 0x01) | ((system_rtc_timer.year % 10) << 4);
-		txbuf[NVM_REP_PSE]     = 0x01;
+		txbuf[NVM_LV_REP]      = 0x01 | ((system_rtc_timer.year % 10) << 4);
+		txbuf[NVM_REP_PSE]     = 0x02;
 		txbuf[NVM_TRIM_CLOCK]  = (txbuf[NVM_TRIM_CLOCK] & 0x0F) | 0x60;
 	}
 
 	/* 唤醒配置设置 ：每16次唤醒才写入一次数据*/
 	{
 		txbuf[NVM_FEATURE]  = txbuf[NVM_FEATURE] | 0x10;
+	}
+	
+	for(i=28;i<64;i++)
+	{
+		txbuf[i]  = 0xFF;
 	}
 	return 0;
 }

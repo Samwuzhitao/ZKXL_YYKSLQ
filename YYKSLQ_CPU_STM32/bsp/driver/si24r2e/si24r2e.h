@@ -15,7 +15,7 @@
 #include "stm32f10x_spi.h"
 #include "board.h"
 
-//#define ENABLE_SI24R2E_DEBUG_LOG
+#define ENABLE_SI24R2E_DEBUG_LOG
 
 #ifdef 	ENABLE_SI24R2E_DEBUG_LOG
 #define DEBUG_SI24R2E_LOG							     DEBUG_LOG
@@ -39,7 +39,7 @@
 #define NVM_TX_DATA_0   0x14
 
 
-extern u8 txbuf[52];
+extern u8 txbuf[64];
 extern u8 txdata[10];
 
 uint8_t si24r2e_read_nvm( uint8_t *pbuf );
