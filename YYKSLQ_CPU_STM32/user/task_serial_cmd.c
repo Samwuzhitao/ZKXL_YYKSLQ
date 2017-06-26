@@ -37,7 +37,7 @@ uint8_t si24r2e_auto_burn_flag = 0;
 extern wl_typedef       wl;
 extern revicer_typedef  revicer;
 extern task_tcb_typedef card_task;
-extern u8 txbuf[52];
+extern u8 txbuf[64];
 /* Private functions ---------------------------------------------------------*/
 
 const static serial_cmd_typedef cmd_list[] = {
@@ -244,10 +244,10 @@ void serial_cmd_si24r2e_rd_wr_nvm(const cJSON *object)
 		p_cmd_str = cJSON_GetObjectItem(object, "pro_index")->valuestring;
 		pro_index = atoi(p_cmd_str);
 		if( pro_index <= 13 )
-		{ 
-			yyk_protocol_update_rf_setting(yyk_pro_list[pro_index]);
+		{
 			p_time_str = cJSON_GetObjectItem(object, "time")->valuestring;
 			parse_str_to_time(p_time_str);
+			yyk_protocol_update_rf_setting(yyk_pro_list[pro_index]);
 			wl.match_status = ON;
 			rf_set_card_status(1);
 			result = 0;
