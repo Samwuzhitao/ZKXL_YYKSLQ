@@ -125,7 +125,7 @@ int16_t yyk_protocol_update_rf_setting( yyk_pro_tyedef *pprotocol )
 	/* 同步发送数据 */
 	if(pprotocol->conf.data_len <= 32)
 	{
-		txbuf[NVM_FIFO_LEN]  = (txbuf[NVM_FIFO_LEN] & 0xC0) | 0x40;
+		txbuf[NVM_FIFO_LEN]  = (txbuf[NVM_FIFO_LEN] & 0xC0) ;
 		txbuf[NVM_FIFO_LEN] |= pprotocol->conf.data_len;
 		memcpy(txdata,pprotocol->conf.data,
 		         pprotocol->conf.data_len);
